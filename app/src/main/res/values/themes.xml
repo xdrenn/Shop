@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Shop" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+    </style>
+<style name="tab_text" parent="@android:style/TextAppearance.Widget.TabWidget">
+    <item name="android:fontFamily">@font/supply_medium</item>
+</style>
+    <style name="Theme.Shop" parent="Base.Theme.Shop" />
+</resources>
