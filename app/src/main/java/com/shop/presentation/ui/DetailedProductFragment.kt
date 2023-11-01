@@ -82,14 +82,30 @@ class DetailedProductFragment : Fragment() {
                     description.text = item.description
                     val detailedColor: ImageView = view.findViewById(R.id.detailed_color)
 
-
-                    if (item.color == "White Blonde")
+                    if (item.color == "Black") {
                         detailedColor.setColorFilter(
                             ContextCompat.getColor(
                                 requireContext(),
-                                R.color.white
+                                R.color.black
                             )
                         )
+                    }
+                    if(item.color == "Aubergine" ){
+                        detailedColor.setColorFilter(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.dark_red
+                            )
+                        )
+                    }
+                    if(item.color == "Gray"){
+                        detailedColor.setColorFilter(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.grey
+                            )
+                        )
+                    }
                     binding.detailsCartButton.setOnClickListener {
                         roomViewModel.addGuitarToCart(item)
                         binding.detailsCartButton.setImageResource(R.drawable.cart_check_icon)
