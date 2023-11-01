@@ -1,18 +1,25 @@
 package com.shop.presentation.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.SearchView
 import android.widget.TextView
-import androidx.navigation.fragment.findNavController
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.shop.R
 import com.shop.databinding.FragmentSearchBinding
 import com.shop.presentation.adapters.TwoGenericsRecyclerAdapter
+import com.shop.utils.GenericClickListener
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
@@ -20,6 +27,7 @@ class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
+    private var bundle = Bundle()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,17 +40,19 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initCategoryRecyclerView()
+        initSearchView()
     }
 
     private fun initCategoryRecyclerView() {
         val recyclerView = binding.rvCategory
+        val categoryFragment = CategoryFragment()
         val bindingInterface =
             object : TwoGenericsRecyclerAdapter.TwoGenericsRecyclerBindingInterface<Int, String> {
                 override fun bindData(
                     item: Int,
                     secondItem: String,
                     view: View,
-                    clickListener: TwoGenericsRecyclerAdapter.GenericClickListener<Int>?,
+                    clickListener: GenericClickListener<Int>?,
                     position: Int
                 ) {
                     val textView: TextView = view.findViewById(R.id.tv_category_name)
@@ -70,19 +80,60 @@ class SearchFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(
             context, LinearLayoutManager.VERTICAL, false
         )
-        adapter.setOnClickListener(object : TwoGenericsRecyclerAdapter.GenericClickListener<Int> {
+        adapter.setOnClickListener(object : GenericClickListener<Int> {
             override fun onClick(position: Int, data: Int) {
-                if (position == 1) {
-                    findNavController().navigate(R.id.action_searchFragment_to_productsFragment)
-                }
-                if (position == 2) {
-                    findNavController().navigate(R.id.action_searchFragment_to_productsFragment)
-                }
-                if (position == 3) {
-                    findNavController().navigate(R.id.action_searchFragment_to_productsFragment)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        if (position == 0) {
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.nav_host_fragment_two, categoryFragment).commit()
+                            bundle.putString("category", "electric")
+                            categoryFragment.arguments = bundle
+
+                        }
+                        if (position == 1) {
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.nav_host_fragment_two, categoryFragment).commit()
+                            bundle.putString("category", "acoustic")
+                            categoryFragment.arguments = bundle
+
+                        }
+                        if (position == 2) {
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.nav_host_fragment_two, categoryFragment).commit()
+                            bundle.putString("category", "bass")
+                            categoryFragment.arguments = bundle
+
+                        }
+                        if (position == 3) {
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.nav_host_fragment_two, categoryFragment).commit()
+                            bundle.putString("category", "accessories")
+                            categoryFragment.arguments = bundle
+                        }
+                    }
                 }
             }
         })
+    }
 
+    private fun initSearchView() {
+        val fragment = ProductsFragment()
+
+        binding.sv.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.nav_host_fragment_two, fragment).commit()
+                return true
+            }
+
+            override fun onQueryTextChange(text: String?): Boolean {
+                CoroutineScope(Dispatchers.IO).launch {
+                    bundle.putString("data", text)
+                    fragment.arguments = bundle
+                }
+                return true
+            }
+        })
     }
 }
