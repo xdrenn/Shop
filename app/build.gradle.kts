@@ -1,8 +1,8 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -44,7 +44,9 @@ dependencies {
     val hiltVersion = "2.44"
     val retrofitVersion = "2.9.0"
     val okhttpVersion = "4.10.0"
-    val coroutinesVersion = "1.7.1"
+    val coroutinesVersion = "1.7.3"
+    val picassoVersion = "2.8"
+    val roomVersion = "2.6.0"
 
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
@@ -72,6 +74,15 @@ dependencies {
 
     //coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:$coroutinesVersion")
+
+    //picasso
+    implementation("com.squareup.picasso:picasso:$picassoVersion")
+
+    //room
+    implementation ( "androidx.room:room-ktx:$roomVersion")
+    implementation ("androidx.room:room-runtime:$roomVersion")
+    kapt("androidx.room:room-compiler:$roomVersion")
+    kapt("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
 }
 kapt {
     correctErrorTypes = true
