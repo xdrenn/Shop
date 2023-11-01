@@ -128,6 +128,7 @@ class ProductsFragment : Fragment() {
                 viewModel.loadGuitarByCategory(string!!)
                 viewModel.loadGuitarByBrand(string)
                 viewModel.loadAccessoryBySubcategory(string)
+                viewModel.loadAccessoryByCategory(string)
                 viewModel.guitarResult.collect {
                     adapter.submitList(it)
                 }

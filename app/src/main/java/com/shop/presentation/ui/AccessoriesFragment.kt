@@ -55,9 +55,9 @@ class AccessoriesFragment : Fragment() {
         )
         adapter.submitList(
             listOf(
-                R.drawable.jimmy_page,
-                R.drawable.angus_young,
-                R.drawable.lemmy_kilmister
+                R.drawable.jimi_hendrix,
+                R.drawable.bob_marley,
+                R.drawable.john_lennon
             )
         )
         binding.accessoriesRv.adapter = adapter

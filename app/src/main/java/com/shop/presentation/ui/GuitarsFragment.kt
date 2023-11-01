@@ -59,9 +59,9 @@ class GuitarsFragment : Fragment() {
         )
         adapter.submitList(
             listOf(
-                R.drawable.jimi_hendrix,
-                R.drawable.bob_marley,
-                R.drawable.john_lennon
+                R.drawable.lemmy_kilmister,
+                R.drawable.angus_young,
+                R.drawable.jimmy_page,
             )
         )
         binding.musiciansRv.adapter = adapter
