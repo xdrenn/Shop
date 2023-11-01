@@ -5,15 +5,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
+import com.shop.utils.GenericClickListener
 
-class TwoGenericsRecyclerAdapter<T : Any, A: Any>(
-    private val dataList: List<T>, private val dataSecondList: List<A>, @LayoutRes val layoutID: Int,
+class TwoGenericsRecyclerAdapter<T : Any, A : Any>(
+    private val dataList: List<T>,
+    private val dataSecondList: List<A>,
+    @LayoutRes val layoutID: Int,
     private val bindingInterface: TwoGenericsRecyclerBindingInterface<T, A>,
     private var clickListener: GenericClickListener<T>? = null
 ) : RecyclerView.Adapter<TwoGenericsRecyclerAdapter.ViewHolder>() {
 
     interface TwoGenericsRecyclerBindingInterface<T : Any, A : Any> {
-        fun bindData(item: T, secondItem: A, view: View, clickListener: GenericClickListener<T>?, position: Int)
+        fun bindData(
+            item: T,
+            secondItem: A,
+            view: View,
+            clickListener: GenericClickListener<T>?,
+            position: Int
+        )
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -26,7 +35,7 @@ class TwoGenericsRecyclerAdapter<T : Any, A: Any>(
         ) {
             bindingInterface.bindData(item, secondItem, view, clickListener, position)
 
-            clickListener?.let{
+            clickListener?.let {
                 view.setOnClickListener {
                     clickListener.onClick(position, item)
                 }
@@ -47,12 +56,7 @@ class TwoGenericsRecyclerAdapter<T : Any, A: Any>(
         holder.bind(item, secondItem, bindingInterface, clickListener, position)
     }
 
-    interface GenericClickListener<T> {
-        fun onClick(position: Int, data: T)
-    }
-
-    fun setOnClickListener(genericClickListener: GenericClickListener<T>){
+    fun setOnClickListener(genericClickListener: GenericClickListener<T>) {
         this.clickListener = genericClickListener
     }
-
 }
