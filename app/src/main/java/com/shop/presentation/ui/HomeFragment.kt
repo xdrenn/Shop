@@ -12,6 +12,7 @@ import com.shop.R
 import com.shop.databinding.FragmentHomeBinding
 import com.shop.presentation.adapters.GenericRecyclerAdapter
 import com.shop.presentation.adapters.VpAdapter
+import com.shop.utils.GenericClickListener
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -49,20 +50,28 @@ class HomeFragment : Fragment() {
     private fun initBannerRecyclerView() {
         val bindingInterface =
             object : GenericRecyclerAdapter.GenericRecyclerBindingInterface<Int> {
-                override fun bindData(item: Int, view: View) {
+                override fun bindData(
+                    item: Int,
+                    view: View,
+                    clickListener: GenericClickListener<Int>?,
+                    position: Int
+                ) {
                     val imageView: ImageView = view.findViewById(R.id.banner_image)
                     imageView.setImageResource(item)
                 }
             }
-        binding.rvBanner.adapter = GenericRecyclerAdapter(
+        val adapter = GenericRecyclerAdapter(
+            R.layout.item_banner,
+            bindingInterface
+        )
+        adapter.submitList(
             listOf(
                 R.drawable.banner_one,
                 R.drawable.banner_four,
                 R.drawable.banner_three
-            ),
-            R.layout.item_banner,
-            bindingInterface
+            )
         )
+        binding.rvBanner.adapter = adapter
         binding.rvBanner.layoutManager = LinearLayoutManager(
             context, LinearLayoutManager.HORIZONTAL, false
         )

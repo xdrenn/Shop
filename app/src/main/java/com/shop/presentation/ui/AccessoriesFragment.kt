@@ -13,6 +13,7 @@ import com.shop.R
 import com.shop.databinding.FragmentAccessoriesBinding
 import com.shop.presentation.adapters.GenericRecyclerAdapter
 import com.shop.presentation.adapters.TwoGenericsRecyclerAdapter
+import com.shop.utils.GenericClickListener
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -36,21 +37,30 @@ class AccessoriesFragment : Fragment() {
     }
 
     private fun initAccessoriesRecyclerView() {
-        val bindingInterface = object : GenericRecyclerAdapter.GenericRecyclerBindingInterface<Int>{
-            override fun bindData(item : Int, view: View){
-                val imageView: ImageView = view.findViewById(R.id.layout_img)
-                imageView.setImageResource(item)
+        val bindingInterface =
+            object : GenericRecyclerAdapter.GenericRecyclerBindingInterface<Int> {
+                override fun bindData(
+                    item: Int,
+                    view: View,
+                    clickListener: GenericClickListener<Int>?,
+                    position: Int
+                ) {
+                    val imageView: ImageView = view.findViewById(R.id.layout_img)
+                    imageView.setImageResource(item)
+                }
             }
-        }
-        binding.accessoriesRv.adapter = GenericRecyclerAdapter(
+        val adapter = GenericRecyclerAdapter(
+            R.layout.item_layout,
+            bindingInterface
+        )
+        adapter.submitList(
             listOf(
                 R.drawable.jimmy_page,
                 R.drawable.angus_young,
                 R.drawable.lemmy_kilmister
-            ),
-            R.layout.item_layout,
-            bindingInterface
+            )
         )
+        binding.accessoriesRv.adapter = adapter
         binding.accessoriesRv.layoutManager = LinearLayoutManager(
             context, LinearLayoutManager.HORIZONTAL, false
         )
@@ -63,7 +73,7 @@ class AccessoriesFragment : Fragment() {
                     item: String,
                     secondItem: Int,
                     view: View,
-                    clickListener: TwoGenericsRecyclerAdapter.GenericClickListener<String>?,
+                    clickListener: GenericClickListener<String>?,
                     position: Int
                 ) {
                     val textView: TextView = view.findViewById(R.id.new_name)
