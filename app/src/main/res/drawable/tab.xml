@@ -4,7 +4,7 @@
         android:state_selected="true">
         <shape android:shape="rectangle">
             <corners android:radius="10dp" />
-            <solid android:color="@color/dark_grey" />
+            <solid android:color="@color/fuscous_grey" />
             <stroke android:width="10dp"
                 android:color="@android:color/transparent" />
         </shape>
