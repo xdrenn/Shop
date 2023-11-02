@@ -1,0 +1,21 @@
+# GuitarShop
+Guitars shop application using ktor backend built with
++ MVVM
++ Coroutines/Coroutines Flow
++ Retrofit
++ Room
++ Navigation Component
++ StateFlow
++ Dagger Hilt
++ Picasso
+
+# Screenshots
+<img src="screenshots/Screenshot_20231103_012159.png" width="200" height="450"/>
+<img src="screenshots/Screenshot_20231103_012427.png" width="200" height="450"/>
+<img src="screenshots/Screenshot_20231103_012452.png" width="200" height="450"/>
+<img src="screenshots/Screenshot_20231103_012505.png" width="200" height="450"/>
+<img src="screenshots/Screenshot_20231103_012558.png" width="200" height="450"/>
+<img src="screenshots/Screenshot_20231103_012632.png" width="200" height="450"/>
+<img src="screenshots/Screenshot_20231103_012647.png" width="200" height="450"/>
+<img src="screenshots/Screenshot_20231103_012657.png" width="200" height="450"/>
+
