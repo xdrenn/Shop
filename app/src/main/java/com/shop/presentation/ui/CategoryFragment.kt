@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.shop.R
+import com.shop.data.model.Accessory
 import com.shop.data.model.Guitar
 import com.shop.databinding.FragmentCategoryBinding
 import com.shop.presentation.adapters.GenericRecyclerAdapter
@@ -45,11 +46,13 @@ class CategoryFragment : Fragment() {
 
         val args = this.arguments
         val inputData = args?.getString("category")
-        initDetailedCategoryRv(inputData)
+        initDetailedGuitarsCategory(inputData)
+        initDetailedAccessoryCategory(inputData)
 
         binding.categoryBackButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.nav_host_fragment_two, SearchFragment()).commit()
+            viewModelStore.clear()
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -68,7 +71,7 @@ class CategoryFragment : Fragment() {
         }
     }
 
-    private fun initDetailedCategoryRv(string: String?) {
+    private fun initDetailedGuitarsCategory(string: String?) {
         val bindingInterface =
             object : GenericRecyclerAdapter.GenericRecyclerBindingInterface<Guitar> {
                 override fun bindData(
@@ -90,18 +93,59 @@ class CategoryFragment : Fragment() {
             R.layout.item_product,
             bindingInterface
         )
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.loadGuitarByCategory(string!!)
                 viewModel.loadGuitarByBrand(string)
-                viewModel.loadAccessoryByCategory(string)
+
                 viewModel.guitarResult.collect {
-                    adapter.submitList(it)
+                    if (it.isNotEmpty()) {
+                        adapter.submitList(it)
+                    }
                 }
             }
         }
         binding.detailedCategoryRv.adapter = adapter
         binding.detailedCategoryRv.layoutManager = GridLayoutManager(context, 2)
 
+    }
+
+    private fun initDetailedAccessoryCategory(string: String?) {
+        val bindingInterface =
+            object : GenericRecyclerAdapter.GenericRecyclerBindingInterface<Accessory> {
+                override fun bindData(
+                    item: Accessory,
+                    view: View,
+                    clickListener: GenericClickListener<Accessory>?,
+                    position: Int
+                ) {
+                    val price = "$${item.price}"
+                    val imageView: ImageView = view.findViewById(R.id.product_image)
+                    Picasso.get().load(item.image).into(imageView)
+                    val textView: TextView = view.findViewById(R.id.product_name)
+                    textView.text = item.name
+                    val secondTextView: TextView = view.findViewById(R.id.product_price)
+                    secondTextView.text = price
+                }
+            }
+        val adapter = GenericRecyclerAdapter(
+            R.layout.item_product,
+            bindingInterface
+        )
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.loadAccessoryByCategory(string!!)
+
+                viewModel.accessoryResult.collect {
+                    if (it.isNotEmpty()) {
+                        adapter.submitList(it)
+                    }
+                }
+            }
+        }
+        binding.secondDetailedCategoryRv.adapter = adapter
+        binding.secondDetailedCategoryRv.layoutManager = GridLayoutManager(context, 2)
     }
 }

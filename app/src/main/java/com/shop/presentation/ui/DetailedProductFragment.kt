@@ -50,12 +50,15 @@ class DetailedProductFragment : Fragment() {
         val args = this.arguments
         val inputData = args?.getInt("id")
 
+        val data = args?.getInt("number")
+
         getGuitarDetails(inputData)
-        getAccessoryDetails(inputData)
+        getAccessoryDetails(data)
 
         binding.detailsBackButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.nav_host_fragment_two, ProductsFragment()).commit()
+                .replace(R.id.nav_host_fragment_two, SearchFragment()).commit()
+            viewModelStore.clear()
         }
     }
 
@@ -102,7 +105,7 @@ class DetailedProductFragment : Fragment() {
                         detailedColor.setColorFilter(
                             ContextCompat.getColor(
                                 requireContext(),
-                                R.color.grey
+                                R.color.dark_grey
                             )
                         )
                     }
@@ -143,15 +146,15 @@ class DetailedProductFragment : Fragment() {
                     position: Int
                 ) {
                     val price = "$${item.price}"
-                    val detailedGuitarImage: ImageView =
+                    val detailedAccessoryImage: ImageView =
                         view.findViewById(R.id.detailed_accessory_image)
-                    Picasso.get().load(item.image).rotate(90F).into(detailedGuitarImage)
-                    val detailedGuitarName: TextView = view.findViewById(R.id.detailed_accessory_name)
-                    detailedGuitarName.text = item.name
-                    val detailedPrice: TextView = view.findViewById(R.id.detailed_accessory_price)
-                    detailedPrice.text = price
-                    val description: TextView = view.findViewById(R.id.accessory_description)
-                    description.text = item.description
+                    Picasso.get().load(item.image).into(detailedAccessoryImage)
+                    val detailedAccessoryName: TextView = view.findViewById(R.id.detailed_accessory_name)
+                    detailedAccessoryName.text = item.name
+                    val detailedAccessoryPrice: TextView = view.findViewById(R.id.detailed_accessory_price)
+                    detailedAccessoryPrice.text = price
+                    val accessoryDescription: TextView = view.findViewById(R.id.accessory_description)
+                    accessoryDescription.text = item.description
 
                     binding.detailsCartButton.setOnClickListener {
                         roomViewModel.addAccessoryToCart(item)
@@ -175,7 +178,6 @@ class DetailedProductFragment : Fragment() {
                 }
             }
         }
-
         binding.detailsAccessoryRv.adapter = adapter
         binding.detailsAccessoryRv.layoutManager = GridLayoutManager(context, 1)
     }

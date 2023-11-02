@@ -1,5 +1,6 @@
 package com.shop.presentation.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,8 +25,6 @@ import com.shop.presentation.vm.ProductViewModel
 import com.shop.utils.GenericClickListener
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -54,8 +53,7 @@ class ProductsFragment : Fragment() {
 
         val args = this.arguments
         val inputData = args?.getString("data")
-        initProductsRv(inputData)
-
+        initGuitarsRv(inputData)
 
         binding.backButton.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -78,7 +76,7 @@ class ProductsFragment : Fragment() {
         }
     }
 
-    private fun initProductsRv(string: String?) {
+    private fun initGuitarsRv(string: String?) {
         val bindingInterface =
             object : GenericRecyclerAdapter.GenericRecyclerBindingInterface<Guitar> {
                 override fun bindData(
@@ -130,28 +128,39 @@ class ProductsFragment : Fragment() {
                 viewModel.loadAccessoryBySubcategory(string)
                 viewModel.loadAccessoryByCategory(string)
                 viewModel.guitarResult.collect {
-                    adapter.submitList(it)
-                }
-                viewModel.accessoryResult.collect {
-                    secondAdapter.submitList(it)
+                    if (it.isNotEmpty()) {
+                        adapter.submitList(it)
+                    } else {
+                        viewModel.accessoryResult.collect { list ->
+                            secondAdapter.submitList(list)
+                        }
+                    }
                 }
             }
         }
 
         binding.svProducts.setOnQueryTextListener(
             object : SearchView.OnQueryTextListener {
+                @SuppressLint("NotifyDataSetChanged")
                 override fun onQueryTextSubmit(text: String?): Boolean {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        text?.let {
-                            viewModel.loadGuitarByCategory(text)
-                            viewModel.loadGuitarByBrand(text)
-                            viewModel.loadAccessoryBySubcategory(text)
-
-                            viewModel.guitarResult.collect {
-                                adapter.submitList(it)
-                            }
-                            viewModel.accessoryResult.collect {
-                                secondAdapter.submitList(it)
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        repeatOnLifecycle(Lifecycle.State.STARTED) {
+                            if (text != null) {
+                                adapter.submitList(null)
+                                secondAdapter.submitList(null)
+                                viewModel.loadGuitarByCategory(text)
+                                viewModel.loadGuitarByBrand(text)
+                                viewModel.loadAccessoryBySubcategory(text)
+                                viewModel.loadAccessoryByCategory(text)
+                                viewModel.guitarResult.collect {
+                                    if (it.isNotEmpty()) {
+                                        adapter.submitList(it)
+                                    } else {
+                                        viewModel.accessoryResult.collect { list ->
+                                            secondAdapter.submitList(list)
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -162,16 +171,27 @@ class ProductsFragment : Fragment() {
                     return true
                 }
             })
+
         binding.rvGuitarProducts.adapter = adapter
         binding.rvGuitarProducts.layoutManager = GridLayoutManager(context, 2)
-
-        binding.rvAccessoryProducts.adapter = secondAdapter
-        binding.rvAccessoryProducts.layoutManager = GridLayoutManager(context, 2)
 
         adapter.setOnClickListener(
             object : GenericClickListener<Guitar> {
                 override fun onClick(position: Int, data: Guitar) {
                     bundle.putInt("id", data.id)
+                    fragment.arguments = bundle
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.nav_host_fragment_two, fragment).commit()
+                }
+            })
+
+        binding.rvAccessoryProducts.adapter = secondAdapter
+        binding.rvAccessoryProducts.layoutManager = GridLayoutManager(context, 2)
+
+        secondAdapter.setOnClickListener(
+            object : GenericClickListener<Accessory> {
+                override fun onClick(position: Int, data: Accessory) {
+                    bundle.putInt("number", data.id)
                     fragment.arguments = bundle
                     parentFragmentManager.beginTransaction()
                         .replace(R.id.nav_host_fragment_two, fragment).commit()

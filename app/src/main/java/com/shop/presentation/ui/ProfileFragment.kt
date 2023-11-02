@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.shop.MainActivity
 import com.shop.R
 import com.shop.databinding.FragmentProfileBinding
 import com.shop.presentation.vm.AuthViewModel
