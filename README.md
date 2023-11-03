@@ -1,5 +1,5 @@
 # GuitarShop
-Guitars shop application using [ktor backend](https://github.com/xdrenn/ktor-shop-backend) built with
+Приложение магазина гитар, использующее [ktor бэкенд](https://github.com/xdrenn/ktor-shop-backend) построенный с
 + MVVM
 + Coroutines/Coroutines Flow
 + Retrofit
